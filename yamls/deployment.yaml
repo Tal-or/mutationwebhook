@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-to-claim-mutating-webhook-deployment
+  namespace: nrt-to-dra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-to-claim-mutating-webhook
+  template:
+    metadata:
+      labels:
+        app: resource-to-claim-mutating-webhook
+    spec:
+      containers:
+        - name: webhook
+          image: quay.io/titzhak/mutationwebhook:latest  # Replace with your actual image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 443
+          volumeMounts:
+            - name: webhook-tls
+              mountPath: /etc/webhook/certs
+              readOnly: true
+          command:
+            - /bin/webhook
+          args:
+            - --tls-cert-file=/etc/webhook/certs/tls.crt
+            - --tls-private-key-file=/etc/webhook/certs/tls.key
+            - --v=2
+      volumes:
+        - name: webhook-tls
+          secret:
+            secretName: resource-to-claim-mutating-webhook-secret  # TLS secret for HTTPS

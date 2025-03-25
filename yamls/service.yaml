@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-to-claim-mutating-webhook-service
+  namespace: nrt-to-dra
+spec:
+  selector:
+    app: resource-to-claim-mutating-webhook
+  ports:
+    - protocol: TCP
+      port: 443      # The Service listens on port 443
+      targetPort: 443 # The container must also listen on port 443
